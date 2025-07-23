@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
+import axios from 'axios'
 
-const FacialExpressionDetector = () => {
+const FacialExpressionDetector = ({setSongs}) => {
   const videoRef = useRef(null);
   const [expression, setExpression] = useState("Detecting...");
 
@@ -52,7 +53,15 @@ const FacialExpressionDetector = () => {
         const sorted = Object.entries(detections.expressions).sort(
           (a, b) => b[1] - a[1]
         );
-        setExpression(`${sorted[0][0]} (${(sorted[0][1] * 100).toFixed(2)}%)`);
+        setExpression(`${sorted[0][0]}`);
+        axios.get(`http://localhost:3000/songs?mood=${sorted[0][0]}`)
+        .then((response) => {
+          console.log(response.data)
+          setSongs(response.data.songs)
+        })
+        .catch((err) => {
+          console.log("API error: ", err)
+        })
       } else {
         setExpression(`No Face detected`);
       }
@@ -76,9 +85,9 @@ const FacialExpressionDetector = () => {
         style={{ display: "block", margin: "auto", padding: "10px 16px", fontSize: "20px" }}
         onClick={detectExpression}
       >
-        Start detecting expression
+        Start detecting mood
       </button>
-      <h2 style={{ marginTop: "1rem" }}>Expression: {expression}</h2>
+      <h2 style={{ marginTop: "1rem" }}>Current mood: {expression}</h2>
     </div>
   );
 };
