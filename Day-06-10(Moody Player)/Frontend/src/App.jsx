@@ -7,10 +7,10 @@ const App = () => {
   const [songs, setSongs] = useState([])
 
   return (
-    <>
+    <div className="min-h-screen flex bg-gray-900">
       <FacialExpressionDetector setSongs={setSongs} />
       <RecommendedSongs songs={songs} />
-    </>
+    </div>
   );
 };
 
